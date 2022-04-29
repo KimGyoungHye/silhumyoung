@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+<configuration>
+
+	<typeAliases>
+		<typeAlias type="bohum.model.BohumBean" alias="myBohum"/>
+		<typeAlias type="company.model.CompanyBean" alias="MyCompany"/>
+		<typeAlias type="member.model.MemberBean" alias="MyMember"/>
+		<typeAlias type="memberDetail.model.MemberDetailBean" alias="MyMemberDetail"/>
+		<typeAlias type="insucate.model.InsuCateBean" alias="MyInsuCate"/>
+		<typeAlias type="board.model.BoardBean" alias="MyBoard"/>
+		<typeAlias type="heart.model.HeartBean" alias="MyHeart"/>
+		<typeAlias type="bohum.model.BohumDataBean" alias="MyBohumData"/>
+		<typeAlias type="bohum.model.BohumDetailBean" alias="MyBohumDetail"/>
+		<typeAlias type="graph.model.GraphBean" alias="MyGraph"/>
+		<typeAlias type="qa_board.model.QA_BoardBean" alias="MyQA_Board"/>
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="mybatis/bohum.xml" />
+		<mapper resource="mybatis/company.xml" />
+		<mapper resource="mybatis/member.xml" />
+		<mapper resource="mybatis/memberDetail.xml" />
+		<mapper resource="mybatis/insu_cate.xml" />
+		<mapper resource="mybatis/board.xml" />
+		<mapper resource="mybatis/heart.xml" />
+		<mapper resource="mybatis/heartMember.xml" />
+		<mapper resource="mybatis/homeAdmin.xml" />
+		<mapper resource="mybatis/graph.xml" />
+		<mapper resource="mybatis/qa_board.xml" />
+	</mappers>
+
+</configuration>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="heart.HeartBean">
+	<insert id="InsertHeart">
+		insert into heart(mid, insu_num) values(#{mid}, #{insu_num}) 
+	</insert>
+	
+	<delete id="DeleteHeart">
+		delete from heart where mid=#{mid} and insu_num=#{insu_num}
+	</delete>
+	
+	<select id="GetHeartList" resultType="bohum.model.BohumBean">
+		select i.insu, i.insuname, i.category, i.insucompany, i.link
+		from heart h inner join insu i
+		on h.insu_num=i.insu where h.mid=#{mid}
+	</select>
+  </mapper>

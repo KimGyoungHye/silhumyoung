@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="insucate.InsuCateBean">
+	<insert id="InsertCategory">
+		insert into insu_cate values(insu_cateseq.nextval, #{category})
+	</insert>
+	
+	<select id="GetCategoryList" resultType="MyInsuCate">
+		select * from insu_cate order by num
+	</select>
+	
+	<select id="GetCategory" resultType="MyInsuCate">
+		select * from insu_cate where num=#{num}
+	</select>
+	
+	<update id="UpdateCategory">
+		update insu_cate set category=#{category} where num=#{num} 
+	</update>
+	
+	<delete id="DeleteCategory">
+		delete from insu_cate where num=#{num}
+	</delete>
+  </mapper>

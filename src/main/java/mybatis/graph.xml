@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="graph.GraphBean">
+
+		<select id="GetGraphDataAgeNBohum" resultType="MyGraph">
+			select age as x,  count(bohumCount) as y
+			from (select age , cmpyNm ,prdNm , count(*) as bohumCount 
+			from bohum
+			group by age,  cmpyNm ,prdNm )
+            group by age
+            order by age
+		</select>
+		
+		<select id="GetGraphDataMogNBohum" resultType="MyGraph">
+			select  bohumCount as x, count(bohumCount)  as y   
+ 			from( select age , cmpyNm ,prdNm , count(*) as bohumCount 
+			from bohum
+			group by age,  cmpyNm ,prdNm )
+            group by bohumCount
+            order by x
+		</select>
+		
+		<select id="GetGraphDataInsunameNHeart" resultType="MyGraph">
+			select i.insucompany, i.insuname as x,count(*) as y
+            from insu i inner join heart h 
+            on i.insu = h.insu_num
+            group by i.insucompany, i.insuname
+		</select>
+		
+		
+		<select id="GetGraphDataGender" resultType="MyGraph">
+			select count(*) as y from members
+			<if test="x=='남자'">
+				where regi_number2 like '1%' or  regi_number2 like '3%'
+			</if>
+			<if test="x=='여자'">
+				where regi_number2 like '2%' or  regi_number2 like '4%'
+			</if>
+		</select>
+		
+		<select id="GetGraphDataCompanyNInsu" resultType="MyGraph">
+			select insucompany x, count(*) as y
+            from insu
+            group by insucompany 
+		</select>
+		
+		<select id="GetGraphDataCategoryNInsu" resultType="MyGraph">
+			select category x, count(*) as y
+            from insu
+            group by category 
+		</select>
+  </mapper>

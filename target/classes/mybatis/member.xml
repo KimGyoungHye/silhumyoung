@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="member.model.Member">
+  
+	<insert id="InsertMember">
+		insert into members(userDetail, userState, id, name, password, regi_number1, regi_number2, phone1, phone2, phone3, email1, email2)
+		values (userDetails_seq.nextval, #{userState}, #{id}, #{name}, #{password}, #{regi_number1}, #{regi_number2}, #{phone1}, #{phone2}, #{phone3}, #{email1}, #{email2})
+	</insert>
+	
+	<insert id="InsertCMember">
+		insert into members(userDetail,cname, userState, id, name, password, regi_number1, regi_number2, phone1, phone2, phone3, email1, email2)
+		values (userDetails_seq.nextval,#{cname}, #{userState}, #{id}, #{name}, #{password}, #{regi_number1}, #{regi_number2}, #{phone1}, #{phone2}, #{phone3}, #{email1}, #{email2})
+	</insert>
+	
+	<select id="SearchId" resultType="MyMember">
+  		select * from members where id = #{id}
+  	</select>
+  	
+	<select id="GetIdByName" resultType="String">
+  		select id from members where name=#{name} and regi_number1=#{regi_number1} and regi_number2=#{regi_number2}
+  	</select>
+  	
+  	<select id="GetPwById" resultType="MyMember">
+  		select * from members where id=#{id} and name=#{name} and regi_number1=#{regi_number1} and regi_number2=#{regi_number2}
+  	</select>
+  	
+  	<select id="GetTotalCount" resultType="int">
+  	select count(*) from members
+  	<if test="whatColumn == 'id'">
+  		where upper(id) like #{keyword}
+  	</if>
+  	<if test="whatColumn == 'userState'">
+  		where userState like #{keyword}
+  	</if>
+  	  <if test="whatColumn == 'cname'">
+  		where upper(cname) like #{keyword}
+  	</if>
+  	<if test="whatColumn == 'all'">
+  		where upper(id) like #{keyword}
+  		or userState like #{keyword}
+  		or upper(cname) like #{keyword}
+  	</if>
+  	</select>
+  	
+  	<select id="GetMemberList" resultType="MyMember">
+  	select * from members
+  	<if test="whatColumn == 'id'">
+  		where upper(id) like #{keyword}
+  	</if>
+  	<if test="whatColumn == 'userState'">
+  		where userState like #{keyword}
+  	</if>
+  	<if test="whatColumn == 'cname'">
+  		where upper(cname) like #{keyword}
+  	</if>
+  	<if test="whatColumn == 'all'">
+  		where upper(id) like #{keyword}
+  		or userState like #{keyword}
+  		or upper(cname) like #{keyword}
+  	</if>
+  	</select>
+  	
+  	<select id="GetMember" resultType="MyMember">
+ 		select * from members where id=#{id}
+ 	</select>
+ 	
+ 	<update id="UpdateMember">
+ 		update members set password=#{password}, regi_number1=#{regi_number1}, regi_number2=#{regi_number2}, phone1=#{phone1}, phone2=#{phone2}, phone3=#{phone3}, email1=#{email1}, email2=#{email2} where id=#{id}
+ 	</update>
+ 	
+ 	<delete id="DeleteMember">
+ 		delete from members where id=#{id}
+ 	</delete>
+  	
+  	<!-- 회원가입할 떄 id중복체크 클릭 -->
+  	<select id="IdCheck" resultType="int">
+  		select count(*) from members where id=#{userid}
+  	</select>
+  	
+  	<select id="GetMemberKakao" resultType="MyMember">
+		select * from members where email1=#{email1} and email2=#{email2}
+	</select>
+	
+	<update id="updatePw">
+		update members set password=#{password} where id=#{id}
+	</update>
+	
+	<update id="UserStateUpdate">
+      update members set userState=#{userState}
+      <if test="userState == '회사'">
+	  	, cname=#{cname}
+	  </if>
+	  <if test="userState != '회사'">
+	  	, cname=null
+	  </if>
+       where id=#{id}
+   </update>
+
+  </mapper>

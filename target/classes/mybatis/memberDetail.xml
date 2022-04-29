@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="memberDetail.MemberDetailBean">
+	<select id="GetMemberDetail" resultType="MyMemberDetail">
+		select * from userDetails where num=#{num}
+	</select>
+  	<insert id="InsertMemberDetail">
+  		insert into userDetails 
+  		values(#{num},#{age},#{gender},#{job},
+  		#{salary},#{marriage},#{height},#{weight},
+  		#{disease},#{family_history})
+  	</insert>
+  	
+  	<delete id="DeleteMemberDetail">
+  		delete from userDetails
+  		where num=#{num}
+  	</delete>
+  	
+  	<update id="UpdateMemberDetail">
+		update userDetails set age=#{age}, gender=#{gender}, job=#{job}, salary=#{salary}, marriage=#{marriage},
+		height=#{height}, weight=#{weight}, disease=#{disease}, family_history=#{family_history}
+		where num=#{num}
+	</update>
+	
+  </mapper>

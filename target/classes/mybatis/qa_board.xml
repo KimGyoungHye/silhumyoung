@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="qa_board.QA_BoardBean">
+   
+   <select id="GetTotalCount" resultType="int">
+      select count(*) from qa_board
+      <if test="userState=='일반'">
+          where writer = #{id}
+          <if test="category=='보험질문'">
+             and category=#{category}
+          </if>
+          <if test="category=='고객의소리'">
+             and category=#{category}
+          </if>
+          <if test="category=='전체목록'">
+             and category in ('보험질문','고객의소리')
+          </if>
+       </if>
+       <if test="userState=='회사'">
+          where company = #{company}
+          <if test="category=='보험질문'">
+             and category=#{category}
+          </if>
+          <if test="category=='고객의소리'">
+             and category=#{category}
+          </if>
+          <if test="category=='전체목록'">
+             and category in ('보험질문','고객의소리')
+          </if>
+       </if>
+       <if test="userState=='관리자'">
+          <if test="category=='보험질문'">
+             where category=#{category}
+          </if>
+          <if test="category=='고객의소리'">
+             where category=#{category}
+          </if>
+          <if test="category=='전체목록'">
+             where category in ('보험질문','고객의소리')
+          </if>
+       </if>
+   </select>
+   
+   <select id="GetQA_BoardList" resultType="MyQA_Board">
+      select no ,image , writer, company, title , password , reg_date , readcount, ref, re_step, re_level, content, ip, category           
+      from (select rownum as rank, no ,image , writer, company, title , password , reg_date , readcount, ref, re_step, re_level, content, ip, category 
+      from (select no ,image , writer, company, title , password , reg_date , readcount, ref, re_step, re_level, content, ip, category 
+      from qa_board  order by ref desc, re_step asc ))
+      <if test="userState=='일반'">
+          where writer = #{id}
+          <if test="category=='보험질문'">
+             and category=#{category}
+          </if>
+          <if test="category=='고객의소리'">
+             and category=#{category}
+          </if>
+          <if test="category=='전체목록'">
+             and category in ('보험질문','고객의소리')
+          </if>
+       </if>
+       <if test="userState=='회사'">
+          where company = #{company}
+          <if test="category=='보험질문'">
+             and category=#{category}
+          </if>
+          <if test="category=='고객의소리'">
+             and category=#{category}
+          </if>
+          <if test="category=='전체목록'">
+             and category in ('보험질문','고객의소리')
+          </if>
+       </if>
+       <if test="userState=='관리자'">
+          <if test="category=='보험질문'">
+             where category=#{category}
+          </if>
+          <if test="category=='고객의소리'">
+             where category=#{category}
+          </if>
+          <if test="category=='전체목록'">
+             where category in ('보험질문','고객의소리')
+          </if>
+       </if>
+   </select>
+   
+   <update id="UpdateQA_BoardCount">
+      update qa_board set readcount = readcount+1 where no=#{no}
+   </update>
+   
+   <select id="GetArticle" resultType="MyQA_Board">
+      select * from qa_board where no=#{no}
+   </select>
+   
+   <select id="GetCategoryList" resultType="String">
+      select category from qa_board group by category
+   </select>
+   
+   <insert id="InsertQA_Board">
+      insert into qa_board(no,writer,category,title,password,company,ref,content,ip,image)
+      values(qa_seq.nextval,#{writer},#{category},#{title},#{password},#{company}, qa_seq.currval ,#{content},#{ip},#{image})
+   </insert>
+   
+   <update id="UpdateQA_Board">
+      update qa_board set category=#{category}, company=#{company}, title=#{title}, content=#{content}, image=#{image}
+      where no=#{no}
+   </update>
+   
+   <update id="ReplyQA_Board1">
+      update qa_board set re_step=re_step+1 where ref=#{ref} and re_step>#{re_step}
+   </update>
+   
+   <insert id="ReplyQA_Board2">
+      insert into qa_board(no, category, title, writer, password, company, content, image, ref, re_step, re_level, ip)
+      values(qa_seq.nextval,#{category},#{title},#{writer},#{password},#{company},#{content},#{image},#{ref},#{re_step}+1,#{re_level}+1,#{ip})
+   </insert>
+   
+   <delete id="DeleteQA_Board">
+      delete from qa_board where no=#{no}
+   </delete>
+  </mapper>

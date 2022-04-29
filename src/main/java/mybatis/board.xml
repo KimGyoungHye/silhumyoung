@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="board.BoardBean">
+   <select id="GetTotalCount" resultType="int">
+      select count(*) from board 
+      <if test="whatColumn=='전체검색'">
+         where btitle like #{keyword}
+         or bcontents like #{keyword}
+      </if>
+      <if test="whatColumn=='제목'">
+         where btitle like #{keyword}
+      </if>
+      <if test="whatColumn=='내용'">
+         where bcontents like #{keyword}
+      </if>
+   </select>
+   
+   <select id="GetBoardList" resultType="MyBoard">
+      select * from board 
+      <if test="whatColumn=='전체검색'">
+         where btitle like #{keyword}
+         or bcontents like #{keyword}
+      </if>
+      <if test="whatColumn=='제목'">
+         where btitle like #{keyword}
+      </if>
+      <if test="whatColumn=='내용'">
+         where bcontents like #{keyword}
+      </if>
+      order by fix desc, bnum desc
+   </select>
+   
+   <update id="UpdateReadcount">
+      update board set breadcount=breadcount+1 where bnum=#{bnum}
+   </update>
+   
+   <select id="GetArticle" resultType="MyBoard">
+      select * from board where bnum=#{bnum}
+   </select>
+   
+   <update id="UpdateArticle">
+      update board set btitle=#{btitle}, bcontents=#{bcontents}, bimage=#{bimage}, breadcount=#{breadcount}, fix=#{fix}
+      where bnum=#{bnum}
+   </update>
+   
+   <insert id="InsertArticle">
+      insert into board(bnum, btitle, bcontents, bimage, breadcount, fix)
+      values(board_seq.nextval, #{btitle}, #{bcontents}, #{bimage}, #{breadcount}, #{fix}) 
+   </insert>
+   
+   <delete id="DeleteArticle">
+      delete from board where bnum=#{bnum}
+   </delete>
+  </mapper>

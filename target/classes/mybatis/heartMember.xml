@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="heartMember.heartMemberBean">
+	<select id="GetHeartMemberList" resultType="heartMember.model.HeartMemberBean">
+		select i.insuname , h.mid , m.name, m.phone1, m.phone2, m.phone3, m.email1, m.email2
+		from insu i inner join heart h
+		on i.insu =h.insu_num 
+		inner join members m
+		on m.id = h.mid 
+		and i.insucompany=#{cname}
+	</select>
+	
+	<select id="GetGraphDateCom" resultType="MyGraph">
+		select i.insucompany, h.heartdate as x,count(*) as y
+        from insu i inner join heart h 
+        on i.insu = h.insu_num
+        where insucompany=#{insucompany}
+        group by i.insucompany, h.heartdate
+	</select>
+	
+	<select id="GetInsuName" resultType="heartMember.model.HeartMemberBean">
+		select distinct i.insuname from insu i inner join heart h
+		on i.insu= h.insu_num where i.insucompany=#{loginComMem}
+	</select>
+	
+	<select id="GetInsuPerson" resultType="MyGraph">
+		select insuname as x ,(select count(*) from heart 
+		where insu_num = insu.insu)as y from insu where insucompany=#{loginComMem}
+	</select>
+	
+	
+  </mapper>
+  

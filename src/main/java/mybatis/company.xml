@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- company.xml -->
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="company.CompanyBean" >
+  
+  	<select id="GetAllCompanyList" resultType="MyCompany">
+		select * from cinfo order by cnum desc
+	</select>
+	
+	<insert id="InsertCompany">
+ 		insert into cinfo(cnum,cname,cregi_num,cimage,cadmin,clink)
+ 		values(cinfo_seq.nextval,#{cname},#{cregi_num},#{cimage},#{cadmin},#{clink})
+ 	</insert>
+ 	
+ 	<select id="CompanyInfo" resultType="MyCompany">
+ 		select * from cinfo where cname=#{cname}
+ 	</select>
+ 	
+ 	<update id="UpdateCompany">
+		<if test="cimage!=''">
+			update cinfo set cname=#{cname}, cregi_num=#{cregi_num}, cimage=#{cimage}, clink=#{clink} where cnum=#{cnum}
+		</if>
+		<if test="cimage==''">
+			update cinfo set cname=#{cname}, cregi_num=#{cregi_num}, cimage=#{image2}, clink=#{clink} where cnum=#{cnum}
+		</if>		
+	</update>
+
+	<select id="CompanyList" resultType="MyCompany">
+		select * from cinfo 
+		<if test="s_company!=null">
+			where upper(cname) like #{s_company} order by cnum desc
+		</if>
+	</select>
+	
+	<select id="GetCompanyList" resultType="String">
+		select cname from cinfo where cregi_num=#{cregi_num}
+	</select>
+	
+	<update id="UpdateCname">
+		update members set cname=#{cname} where id=#{id}
+	</update>
+
+	<select id="SearchId" resultType="MyMember">
+  		select * from members where id = #{id}
+  	</select>
+  	
+  	<select id="GetCnameCimage" resultType="MyCompany">
+  		select * from cinfo
+  	</select>
+  	
+  	<delete id="DeleteCompany">
+  		delete cinfo where cnum=#{cnum}
+  	</delete>
+  	
+  	<select id="CompanyInfo2" resultType="MyCompany">
+       select * from cinfo where cnum=#{cnum}
+    </select>
+  	
+  </mapper>

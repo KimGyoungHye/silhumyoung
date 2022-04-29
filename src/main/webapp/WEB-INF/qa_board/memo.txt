@@ -1,0 +1,195 @@
+drop table board CASCADE CONSTRAINTS ;
+
+create table board( 
+	num number not null primary key,
+	writer varchar2(10) not null,
+	email varchar2(10),
+	subject varchar2(20) not null,
+	passwd varchar2(12) not null,
+	reg_date date not null,
+	readcount int default 0,
+	ref number not null,
+	re_step number not null,
+	re_level number not null,
+	content varchar2(20) not null,
+	ip varchar2(15) not null
+);
+
+drop sequence board_seq;
+create sequence board_seq
+  increment by 1
+  start with 1
+  minvalue 1
+  maxvalue 10000
+  nocache;
+  
+
+--아래 sql문은 답글까지 insert 한 것
+	
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a1','a1','a1','1234','2015-1-1',1,0,0,'내용1','127.0.0.1');
+
+
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a2','a2','a2','1234','2015-1-1',2,0,0,'내용2','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a21','a21','a21','1234','2015-1-1',2,4,1,'내용21','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a22','a22','a22','1234','2015-1-1',2,1,1,'내용22','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a221','a221','a221','1234','2015-1-1',2,3,2,'내용221','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a222','a222','a222','1234','2015-1-1',2,2,2,'내용222','127.0.0.1');
+
+
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a3','a3','a3','1234','2015-1-1',7,0,0,'내용3','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a31','a31','a31','1234','2015-1-1',7,6,1,'내용31','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a311','a311','a311','1234','2015-1-1',7,7,2,'내용311','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a32','a32','a32','1234','2015-1-1',7,2,1,'내용32','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a321','a321','a321','1234','2015-1-1',7,5,2,'내용321','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a322','a322','a322','1234','2015-1-1',7,3,2,'내용322','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a3221','a3221','a3221','1234','2015-1-1',7,4,3,'내용3221','127.0.0.1');
+
+insert into board(num,writer,email,subject,passwd,reg_date,ref,re_step,re_level,content,ip)
+values(board_seq.nextval,'a33','a33','a33','1234','2015-1-1',7,1,1,'내용33','127.0.0.1');
+
+
+commit;
+
+SQL> col subject for a10
+SQL> select rownum,num,subject,ref,re_step,re_level from board;
+
+    ROWNUM        NUM SUBJECT           REF    RE_STEP   RE_LEVEL
+---------- ---------- ---------- ---------- ---------- ----------
+         1          1 a1                  1          0          0
+         2          2 a2                  2          0          0
+         3          3 a21                 2          4          1
+         4          4 a22                 2          1          1
+         5          5 a221                2          3          2
+         6          6 a222                2          2          2
+         7          7 a3                  6          0          0
+         8          8 a31                 6          6          1
+         9          9 a311                6          7          2
+        10         10 a32                 6          2          1
+        11         11 a321                6          5          2
+        12         12 a322                6          3          2
+        13         13 a3221               6          4          3
+        14         14 a33                 6          1          1
+
+	--select max(ref) from board; 
+	--update board set re_step=re_step+1 where ref=#{ref} and re_step>#{re_step}
+	
+
+SQL> select rownum,num,subject,ref,re_step,re_level from board
+  2  order by ref desc, re_step asc;
+
+    ROWNUM        NUM SUBJECT           REF    RE_STEP   RE_LEVEL
+---------- ---------- ---------- ---------- ---------- ----------
+         7          7 a3                  6          0          0
+        14         14 a33                 6          1          1
+        10         10 a32                 6          2          1
+        12         12 a322                6          3          2
+        13         13 a3221               6          4          3
+        11         11 a321                6          5          2
+         8          8 a31                 6          6          1
+         9          9 a311                6          7          2
+         2          2 a2                  2          0          0
+         4          4 a22                 2          1          1
+         6          6 a222                2          2          2
+         5          5 a221                2          3          2
+         3          3 a21                 2          4          1
+         1          1 a1                  1          0          0
+
+14 개의 행이 선택되었습니다.
+
+[topN절 사용의 1단계]
+select num, subject, ref, re_step, re_level	
+from board 
+order by ref desc, re_step asc;
+
+
+      NUM SUBJECT           REF    RE_STEP   RE_LEVEL
+--------- ---------- ---------- ---------- ----------
+        7 a3                  6          0          0
+       14 a33                 6          1          1
+       10 a32                 6          2          1
+       12 a322                6          3          2
+       13 a3221               6          4          3
+       11 a321                6          5          2
+        8 a31                 6          6          1
+        9 a311                6          7          2
+        2 a2                  2          0          0
+        4 a22                 2          1          1
+        6 a222                2          2          2
+        5 a221                2          3          2
+        3 a21                 2          4          1
+        1 a1                  1          0          0
+
+[topN절 사용의 2단계]
+select rownum as rank, num, subject, ref, re_step, re_level	
+from (select num, subject, ref, re_step, re_level	
+from board 
+order by ref desc, re_step asc);
+
+
+     RANK        NUM SUBJECT           REF    RE_STEP   RE_LEVEL
+--------- ---------- ---------- ---------- ---------- ----------
+        1          7 a3                  6          0          0
+        2         14 a33                 6          1          1
+        3         10 a32                 6          2          1
+        4         12 a322                6          3          2
+        5         13 a3221               6          4          3
+        6         11 a321                6          5          2
+        7          8 a31                 6          6          1
+        8          9 a311                6          7          2
+        9          2 a2                  2          0          0
+       10          4 a22                 2          1          1
+       11          6 a222                2          2          2
+       12          5 a221                2          3          2
+       13          3 a21                 2          4          1
+       14          1 a1                  1          0          0
+
+
+[topN절 사용의 최종 3단계]
+
+select rank, num, subject, ref, re_step, re_level		        
+from (select rownum as rank, num, subject, ref, re_step, re_level	
+from (select num, subject, ref, re_step, re_level	
+from board 
+order by ref desc, re_step asc)) 
+where rank between 3 and 7;
+		        
+
+   RANK        NUM SUBJECT           REF    RE_STEP   RE_LEVEL
+------- ---------- ---------- ---------- ---------- ----------
+      3         10 a32                 6          2          1
+      4         12 a322                6          3          2
+      5         13 a3221               6          4          3
+      6         11 a321                6          5          2
+      7          8 a31                 6          6          1
+
+
+
+--select * from board where ref=7; 
+--update board set re_step=re_step+1 where ref=7 and re_step>0;
+	
+

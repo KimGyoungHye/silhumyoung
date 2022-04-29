@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="bohum.model.BohumBean">
+
+<insert id="Insert">
+   insert into insu(insu,insucompany,insuname,link,category,insutype,insuprice,insuage,insuper,payper,paycyc,maincont,spccont)
+   values(insu_seq.nextval,#{insucompany},#{insuname},#{link},#{category},#{insutype},#{insuprice},#{insuage},#{insuper},#{payper},#{paycyc},#{maincont},#{spccont})
+</insert>
+
+<select id="GetTotal" resultType="int">
+   select count(*) from insu
+   <if test="whatColumn=='all'">
+      where insu like #{keyword}
+      or insucompany like #{keyword}
+      or insuname like #{keyword}
+      or link like #{keyword}
+      or category like #{keyword}
+      or insutype like #{keyword}
+      or insuprice like #{keyword}
+      or insuage like #{keyword}
+      or insuper like #{keyword}
+      or payper like #{keyword}
+      or paycyc like #{keyword}
+      or spccont like #{keyword}
+   </if>
+   <if test="whatColumn=='bname'">
+      where insuname like #{keyword}
+   </if>
+   <if test="whatColumn=='bcate'">
+      where category like #{keyword}
+   </if>
+   order by insu desc
+</select>
+
+<select id="GetAll" resultType="myBohum">
+   select * from insu
+   <if test="whatColumn=='all'">
+      where insu like #{keyword}
+      or insucompany like #{keyword}
+      or insuname like #{keyword}
+      or link like #{keyword}
+      or category like #{keyword}
+      or insutype like #{keyword}
+      or insuprice like #{keyword}
+      or insuage like #{keyword}
+      or insuper like #{keyword}
+      or payper like #{keyword}
+      or paycyc like #{keyword}
+      or spccont like #{keyword}
+   </if>
+   <if test="whatColumn=='bname'">
+      where insuname like #{keyword}
+   </if>
+   <if test="whatColumn=='bcate'">
+      where category like #{keyword}
+   </if>
+   order by insu desc
+</select>
+
+<select id="GetCategory" resultType="MyInsuCate">
+   select * from insu_cate
+</select>
+
+<insert id="InsertBohum">
+      insert into bohum
+      values(bohum_seq.nextval,#{basDt},#{cmpyCd},#{cmpyNm},
+      #{ptrn},#{mog},#{age},#{prdNm},#{mlInsRt},#{fmlInsRt})
+   </insert>
+
+   <select id="GetAllTotalCount" resultType="int">
+      select max(rownum)
+      from(select rownum, cmpyCd ,cmpyNm, ptrn , age ,prdNm , rank() over(order by rnk) as rank
+      from(select cmpyCd ,cmpyNm, ptrn ,bohum.age age ,prdNm , rank() over(order by cmpyCd) as rnk
+      from bohum inner join cinfo
+      on cmpyNm = cname
+      <if test="whatColumn=='cmpyNm'">
+         where cmpyNm like #{keyword}
+      </if>
+      <if test="whatColumn=='prdNm'">
+         where prdNm like #{keyword}
+      </if>
+      <if test="whatColumn=='all'">
+         where cmpyNm like #{keyword}
+         or prdNm like #{keyword}
+      </if>
+      group by cmpyCd,cmpyNm, ptrn , age ,prdNm
+      ))
+   </select>
+   
+  <select id="GetTotalCount" resultType="int">
+      select max(rownum)
+      from(select rownum, cmpyCd ,cmpyNm, ptrn ,bohum.age age ,prdNm , mogCount
+      form(select cmpyCd ,cmpyNm, ptrn ,bohum.age age ,prdNm ,count(*) as mogCount
+      <if test="gender='여자'">
+         ,sum(fmlInsRt) as priceSum
+      </if>
+      <if test="gender='남자'">
+         ,sum(mlInsRt) as priceSum
+      </if>
+      from bohum inner join cinfo
+      on cmpyNm = cname
+      
+      <if test="disease!='없음,'">
+         where ptrn!= '4세대 실손의료보험'
+      </if>
+      <if test="disease=='없음,'">
+         where ptrn!= '유병력자'
+      </if>
+      
+      <if test="whatColumn=='cmpyNm'">
+         and cmpyNm like #{keyword}
+      </if>
+      <if test="whatColumn=='prdNm'">
+         and prdNm like #{keyword}
+      </if>
+      <if test="whatColumn=='all'">
+         and (cmpyNm like #{keyword}
+         or prdNm like #{keyword})
+      </if>
+      group by cmpyCd,cmpyNm, ptrn , age ,prdNm
+      having age=#{age}))
+   </select>
+   
+   <select id="GetBoteArr" resultType="MyBohumDetail">
+       select cmpyCd ,cmpyNm, ptrn ,bohum.age age ,prdNm ,count(*) as mogCount
+      <if test="gender='여자'">
+         ,sum(fmlInsRt) as priceSum
+      </if>
+      <if test="gender='남자'">
+         ,sum(mlInsRt) as priceSum
+      </if>
+      from bohum inner join cinfo
+      on cmpyNm = cname
+      
+      <if test="disease!='없음,'">
+         where ptrn!= '4세대 실손의료보험'
+      </if>
+      <if test="disease=='없음,'">
+         where ptrn!= '유병력자'
+      </if>
+      
+      <if test="whatColumn=='cmpyNm'">
+         and cmpyNm like #{keyword}
+      </if>
+      <if test="whatColumn=='prdNm'">
+         and prdNm like #{keyword}
+      </if>
+      <if test="whatColumn=='all'">
+         and (cmpyNm like #{keyword}
+         or prdNm like #{keyword})
+      </if>
+      group by cmpyCd,cmpyNm, ptrn , age ,prdNm
+      having age=#{age}
+   </select>
+   
+      <select id="GetAllBoteArr" resultType="MyBohumDetail">
+      select cmpyCd ,cmpyNm, ptrn ,bohum.age age ,prdNm , rank() over(order by cmpyCd) as rnk
+      from bohum inner join cinfo
+      on cmpyNm = cname
+      <if test="whatColumn=='cmpyNm'">
+         where cmpyNm like #{keyword}
+      </if>
+      <if test="whatColumn=='prdNm'">
+         where prdNm like #{keyword}
+      </if>
+      <if test="whatColumn=='all'">
+         where cmpyNm like #{keyword}graphdataCategorynInsuController
+         
+         or prdNm like #{keyword}
+      </if>
+      group by cmpyCd,cmpyNm, ptrn , age ,prdNm
+   </select>
+   
+   <select id="GetBohumDataDetailInfo" resultType="MyBohumDetail">
+      select * from bohum
+      where cmpyNm=#{cmpyNm} and ptrn=#{ptrn} and prdNm=#{prdNm} and age=#{age}
+   </select>
+
+   <delete id="DeleteBohum">
+      delete from insu where insu=#{insu}
+   </delete>
+   
+   <select id="getInsu" resultType="myBohum">
+      select * from insu where insu=#{insu}
+   </select>
+   
+   <update id="UpdateInsu">
+      <if test="insuprice==''">
+      update insu set insuname=#{insuname}, category=#{category}, insutype=#{insutype}, insuprice=#{image2}, 
+      insuage=#{insuage}, insuper=#{insuper}, payper=#{payper}, paycyc=#{paycyc}, 
+      maincont=#{maincont}, spccont=#{spccont}, link=#{link} where insu=#{insu}
+      </if>
+      <if test="insuprice != ''">
+      update insu set insuname=#{insuname}, category=#{category}, insutype=#{insutype}, insuprice=#{insuprice}, 
+      insuage=#{insuage}, insuper=#{insuper}, payper=#{payper}, paycyc=#{paycyc}, 
+      maincont=#{maincont}, spccont=#{spccont}, link=#{link} where insu=#{insu}
+      </if>
+   </update>
+   
+      <delete id="deleteBohum0">
+      delete bohum where mlInsRt=0 and fmlInsRt=0
+   </delete>
+   
+   <delete id="deleteBohumNull">
+      delete bohum where cmpyNm=null or cmpyNm='null'
+   </delete>
+   
+   <select id="GetAvgByAge" resultType="MyBohumDetail">
+      select mog,age ,round(avg(mlInsRt)) as mlInsRt ,round(avg(fmlInsRt)) as fmlInsRt
+        from bohum
+      group by mog,age 
+        having age=#{age}
+   </select>
+   
+<select id="GetInsuTotal" resultType="int">
+   select count(*) from insu where insucompany=#{cname}
+</select>
+
+<select id="GetAllListCompany" resultType="myBohum">
+   select * from insu where 
+    <if test="whatColumn=='all'">
+      insu like #{keyword}
+      or insucompany like #{keyword}
+      or insuname like #{keyword}
+      or link like #{keyword}
+      or category like #{keyword}
+      or insutype like #{keyword}
+      or insuprice like #{keyword}
+      or insuage like #{keyword}
+      or insuper like #{keyword}
+      or payper like #{keyword}
+      or paycyc like #{keyword}
+      or spccont like #{keyword} and
+   </if>
+   <if test="whatColumn=='bname'">
+      insuname like #{keyword} and
+   </if>
+   <if test="whatColumn=='bcate'">
+      category like #{keyword} and
+   </if> 
+   insucompany=#{cname} order by insu desc
+</select>
+
+</mapper>

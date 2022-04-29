@@ -1,0 +1,582 @@
+﻿-- 공지사항 시퀀스
+drop sequence board_seq;
+create sequence board_seq
+	increment by 1
+  	start with 1
+  	minvalue 1
+  	maxvalue 10000
+  	nocache;
+
+-- 공지사항 게시판 테이블
+
+-- 게시물번호
+-- 게시물 제목
+-- 게시물 내용
+-- 게시물 첨부파일
+-- 게시물 조회수
+-- 게시물 등록일
+-- 게시물 고정
+
+drop table board cascade constraints;
+create table board(
+	bnum number primary key,
+	btitle varchar2(50) not null,
+	bcontents varchar2(200) not null,
+	bimage varchar2(100) default null,
+	breadcount number default 0,
+	bdate date default sysdate,
+	fix varchar2(10) default 0
+);
+
+insert into board(bnum, btitle, bcontents, fix) 
+values(board_seq.nextval, '제목1', '내용1', 1);
+
+insert into board(bnum, btitle, bcontents, fix) 
+values(board_seq.nextval, '제목2', '내용2', 0);
+
+insert into board(bnum, btitle, bcontents, fix) 
+values(board_seq.nextval, '제목3', '내용3', 0);
+
+nsert into board(bnum, btitle, bcontents, bdate, fix)
+values(board_seq.nextval, '[공지] 회원가입 안내', '회원 가입이 일시 중단되었습니다. 가입을 원하시는 분은 관리자에게 문의하세요', '2022-04-06',1);
+
+insert into board(bnum, btitle, bcontents, bdate, fix)
+values(board_seq.nextval, '보험계약에 대해 알려드립니다.', '자세한 상담은 전화로 문의하세요. ', '2022-04-04',1);
+
+
+
+
+
+
+
+commit;
+
+
+-- 큐앤에이 시퀀스
+drop sequence qa_seq;
+create sequence qa_seq
+	increment by 1
+	start with 1
+	nocache;
+
+-- 큐앤에이 게시판 테이블
+
+-- 게시물 시퀀스
+-- 게시물 카테고리
+-- 게시물 제목
+-- 게시물 작성자
+-- 비밀번호
+-- 보험사
+-- 게시물 내용
+-- 게시물 첨부파일
+-- 조회수
+-- 게시물 등록일
+-- ref
+-- re_step
+-- re_level
+-- ip
+
+drop table qa_board  CASCADE CONSTRAINTS;
+create table qa_board(
+   no number not null primary key,
+   category varchar2(20) default '보험질문' check(category in('보험질문','고객의소리','답변')),
+   title varchar2(60) not null,
+   writer varchar2(20) not null,
+   password varchar2(20) not null,
+   company varchar2(20) not null,
+   content varchar2(150) not null,
+   image varchar2(50),
+   readcount number default 0,
+   reg_date date default sysdate,
+   ref number not null,
+   re_step number default 0,
+   re_level number default 0,
+   ip varchar2(15) not null
+);
+
+insert into qa_board(no,writer,company,title,password,ref,re_step,re_level,content,category,ip)
+values(qa_seq.nextval,'kim','흥국화재','암 보험 문의합니다','1234',1,0,0,'암 보험','보험질문','127.0.0.1');
+
+insert into qa_board(no,writer,company,title,password,ref,re_step,re_level,content,category,ip)
+values(qa_seq.nextval,'park','흥국화재','대면 상담예약이 가능할까요?','1234',2,0,0,'대면상담도 가능할까요','고객의소리','127.0.0.1');
+
+insert into qa_board(no,writer,company,title,password,ref,re_step,re_level,content,category,ip)
+values(qa_seq.nextval,'yoo','흥국화재','신생아 보험 문의합니다','1234',3,0,0,'신생아 보험','보험질문','127.0.0.1');
+
+
+insert into qa_board(no,writer,company,title,password,ref,re_step,re_level,content,category,ip)
+values(qa_seq.nextval, 'yoo', '흥국화재', '[답변]신생아 보험 문의합니다', '1234',3,1,1,'전화 주세요 010-1111-1111','보험질문','127.0.0.1');
+
+insert into qa_board(no,writer,company,title,password,ref,re_step,re_level,content,category,ip)
+values(qa_seq.nextval,'cho','흥국화재','운전자 보험 견적 문의합니다','1234',4,0,0,'운전자 보험','보험질문','127.0.0.1');
+
+insert into qa_board(no,writer,company,title,password,ref,re_step,re_level,content,category,ip)
+values(qa_seq.nextval,'yoon','흥국화재','윤선영 설계사님 추천합니다','1234',5,0,0,'윤선영직원님 너무 좋아요','고객의소리','127.0.0.1');
+
+
+
+commit;
+
+-- 보험 카테고리 시퀀스
+drop sequence insu_cateseq;
+create sequence insu_cateseq 
+   start with 1 
+   increment by 1 
+   nocache;
+
+-- 보험 카테고리 테이블
+
+-- 보험 카테고리 시퀀스
+-- 보험 카테고리 이름
+
+drop table insu_cate cascade constraints;
+create table insu_cate(
+   num number unique,
+   category varchar2(50) constraint pk_category primary key
+);
+
+insert into insu_cate values(1,'암 보험');
+insert into insu_cate values(2,'종신/정기 보험');
+insert into insu_cate values(3,'유병자 보험');
+insert into insu_cate values(4,'어린이/태아 보험');
+
+
+--보험 시퀀스
+drop sequence insu_seq;
+create sequence insu_seq
+   minvalue 1
+   start with 1
+   nocache;
+
+--보험 정보 테이블
+
+--보험 시퀀스 
+--보험사
+--보험 이름
+--보험 카테고리(시퀀스로 연결, 꼭 있는지 확인) (암 신생아 어린이 종신)
+--보험 타입 (갱신 비갱신)
+--보험료(절대값 아님)
+--가입 나이
+--보험 기간
+--납입 기간
+--납입 주기
+--주계약
+--특약(시퀀스 연결)
+
+drop table insu cascade constraints;
+create table insu(
+   insu number primary key,
+   insucompany varchar2(100),
+   insuname varchar2(200),
+   category varchar2(100),
+   insutype varchar2(30) default '갱신',
+   insuprice varchar2(200),
+   insuage varchar2(200),
+   insuper varchar2(200),
+   payper varchar2(200),
+   paycyc varchar2(200),
+   maincont varchar2(500),
+   spccont varchar2(30),
+   link varchar2(500)
+);
+
+--치매보험 -- (이수연)
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'흥국화재','행복한인생간병보험','치매/간병 보험','비갱신','30세~최대70세','80세,90세,100세만기','10년,15년,20년,25년,30년납','월납','www.heungkukfire.co.kr/FRW/insurance/insGoods.do?seq=27','행복한인생간병보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'한화손해보험','LIFEPLUS실속간병치매보험','치매/간병 보험','비갱신','20세~최대70세','80,90,95,100,110세 만기','5,10,15,20,25,30년납','월납','www.hwgeneralins.com/product/catalog/product-info.do?insGdcd=LA01390001','lifeplus실속간병치매보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'롯데손해보험','무배당 let:care 간병보험Ⅱ','치매/간병 보험','일부 갱신','15세~최대75세','90,100세 만기','10,215,20,30년납','월납,3개월납,6개월납,연납','lotteins.co.kr/web/C/D/A/cda020.jsp?prdtseq=6','letcare간병보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'라이나생명','THE든든한간병비치매보험','치매/간병 보험','비갱신','30세~60세(전기납일 경우 최대 75세까지)가입가능','85,90세만기','20,25,30년납,전기납','월납','www.lina.co.kr/product/productView/productView_P00320.htm','the든든한간병비치매보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'동양생명','(무)간병비플러스치매보험','치매/간병 보험','비갱신','30새~최대75세','85,90,100세 만기','10,15,20,30년납,80,90년납','','www.myangel.co.kr/process/main','간병비플러스치매보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'KB손해보험','The간편한 치매간병보험','치매/간병 보험','비갱신','25~(90-납입기간)세','90,95,100세','20,25,30년납','월납','www.kbinsure.co.kr/CG306070001.ec#','the간편한치매간병보험.PNG');
+
+
+
+--운전자/상해보험 (유하나)
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) 
+values(insu_seq.nextval,'DB상해보험', '(무)프로미라이프 참좋은운전자상해보험', '운전자 보험', '비갱신', '만18세~55세', 
+'80세,90세,100세만기', '10,15,20,25,30년납', '월납,3월납,6월납,연납', 'www.idbins.com/FWMALV0551.do','참좋은운전자상해보험.PNG' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) 
+values(insu_seq.nextval,'KB손해보험', 'KB 운전자보험과 안전하게 사는 이야기', '운전자 보험', '비갱신', '70세만기:만18세~(70-납입기간)세/80,90,100세만기:만18세~(80-납입기간)세', 
+'70,80,90,100세 만기', '10,15,20년납', '월납', 'www.kbinsure.co.kr/CG301040001.ec#','kb운전자보험과안전하게사는이야기.PNG' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuprice,insuper,payper,paycyc,link) 
+values(insu_seq.nextval,'NH손해보험', '헤아림다이렉트운전자보험', '운전자 보험', '비갱신', '만18세~70세','문의.PNG', '3,5,10,20년 만기', '3,5,10,20년납/전기납', '월납', 'www.nhfire.co.kr/product/retrieveProduct.nhfire?pdtCd=D312314' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuprice,insuper,payper,paycyc,link) 
+values(insu_seq.nextval,'NH손해보험', 'NH올바른지구굿데이운전자보험', '운전자 보험', '비갱신', '만18세~최대80세(영업용운전자는 만18세~최대65세)','문의.PNG', '3,5,10,15,20년 만기/70,80,90,100세 만기', '10년납,전기납/10,20,30년납', '월납,연납', 'www.nhfire.co.kr/product/retrieveProduct.nhfire?pdtCd=D312714' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) 
+values(insu_seq.nextval,'MG손해보험', '하이패스운전자상해보험', '운전자 보험', '비갱신', '만18세~최대69세 (※보험기간별,특약별상이)',
+ '70,80,90세만기(특약별 상이)', '10,20,30년납(보험기간별 상이)', '월납, 연납', 'www.mggeneralins.com/IS011010DM.scp?menuId=MN0302501&inskdRpsntCd=2161B' ,'하이패스운전자상해보험.PNG');
+
+
+
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) 
+values(insu_seq.nextval,'롯데손해보험', 'let:drive운전자보험', '운전자 보험', '비갱신', 
+'만18세~최대 80세(※ 가입가능나이는 납입기간에 따라 상이)', '3,5,10,15,20년만기', '전기납', '월납, 3월납, 6월납, 연납', 'www.lotteinsumall.com/driver.html?utm_source=google_pc&utm_medium=cpc&utm_campaign=jump&utm_term=%EC%86%90%ED%95%B4%EB%B3%B4%ED%97%98&gclid=Cj0KCQjwgYSTBhDKARIsAB8Kukt77kOO4QCGGewe0Wc0KlXps6vSwvAizxBnhesjfiw1rzCL0BQQu6YaAjFwEALw_wcB' ,'letdrive운전자보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) 
+values(insu_seq.nextval,'한화손해보험', '차도리운전자보험', '운전자 보험', '비갱신', '만18세~최고70세', '70,80,100세 만기', '10년.15년.20년.25년.30년납', '월납, 연납', 'www.hwgi.kr/drive?campaign=display&media=skybanner','차도리운전자보험.PNG' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) 
+values(insu_seq.nextval,'현대해상', '뉴하이카운전자상해보험', '운전자 보험', '일부 갱신', '만18세~69세', '70세,80세,90세만기', '10,15,20년납', '월납, 연납', 'www.hi.co.kr/serviceAction.do','뉴하이카운전자상해보험.PNG' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuprice,insuper,payper,paycyc,link) 
+values(insu_seq.nextval,'흥국화재', '든든한SMILE운전자종합보험(1종_연만기)', '운전자 보험', '비갱신', '만18~80세','문의.PNG', '3,5,7,10,15,20년 만기', '전기납,10년납,15년납', '', 'www.heungkukfire.co.kr/FRW/insurance/insGoods.do?seq=35' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) 
+values(insu_seq.nextval,'롯데손해보험', 'let:drive운전자보험', '운전자 보험', '비갱신', 
+'만18세~최대 80세(※ 가입가능나이는 납입기간에 따라 상이)', '3,5,10,15,20년만기', '전기납', '월납, 3월납, 6월납, 연납', 'www.lotteinsumall.com/driver.html?utm_source=google_pc&utm_medium=cpc&utm_campaign=jump&utm_term=%EC%86%90%ED%95%B4%EB%B3%B4%ED%97%98&gclid=Cj0KCQjwgYSTBhDKARIsAB8Kukt77kOO4QCGGewe0Wc0KlXps6vSwvAizxBnhesjfiw1rzCL0BQQu6YaAjFwEALw_wcB' ,'letdrive운전자보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) 
+values(insu_seq.nextval,'한화손해보험', '차도리운전자보험', '운전자 보험', '비갱신', '만18세~최고70세', '70,80,100세 만기', '10년.15년.20년.25년.30년납', '월납, 연납', 'www.hwgi.kr/drive?campaign=display&media=skybanner','차도리운전자보험.PNG' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) 
+values(insu_seq.nextval,'현대해상', '뉴하이카운전자상해보험', '운전자 보험', '일부 갱신', '만18세~69세', '70세,80세,90세만기', '10,15,20년납', '월납, 연납', 'www.hi.co.kr/serviceAction.do','뉴하이카운전자상해보험.PNG' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuprice,insuper,payper,paycyc,link) 
+values(insu_seq.nextval,'흥국화재', '든든한SMILE운전자종합보험(1종_연만기)', '운전자 보험', '비갱신', '만18~80세','전화문의', '3,5,7,10,15,20년 만기', '전기납,10년납,15년납', '', 'www.heungkukfire.co.kr/FRW/insurance/insGoods.do?seq=35' );
+
+
+
+
+
+--암보험
+
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'MG손해보험', '(무)처음부터 올케어 암보험', '암 보험', '일부 갱신', '0세~최대75세', '80,90,100세 만기(특약별 상이)', '10,15,20,25,30년납(특약별 상이)', '월납', 'www.mggeneralins.com/IS011010DM.scp?menuId=MN0301007&inskdRpsntCd=220AO','처음부터올케어암보험.PNG' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '흥국화재', '(무)행복을多주는가족사랑종합보험(22.04)(2종)(암플랜)', '암 보험', '비갱신', '만15세~최대70세(보험기간별, 납입기간별, 특약별 상이)', '80세,90세,100세만기', '10,15,20,25,30년납', '월납', 'www.heungkukfire.co.kr/FRW/insurance/insGoods.do?seq=28','행복을다주는가족사랑종합보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'DB손해보험', '(무)프로미라이프 참좋은훼밀리더블플러스종합보험2204(암플랜)', '암 보험', '비갱신', '만15세~최대75세(단,일부특약은 60~70세까지 가입가능)', '80,90,100세 만기(단,일부특약은 20년만기)', '10년,15년,20년,25년,30년납', '월남', 'www.idbins.com/FWMALV0840.do','프로미라이프참좋은훼밀리더블플러스종합보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'DB손해보험', '(무)New I`m OK 암보험(1종)', '암 보험', '비갱신', '0세~70세', '90세, 100세', '10,15,20,25,30년납', '월납', 'www.idbins.com/FWMALV6033.do','newImOK암보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'KB손해보험', '(무)KB암보험과 건강하게사는이야기', '암 보험', '일부 갱신', '0세~75세', '80세,90세,100세만기', '10,15,20,25,30년납', '월납', 'www.kbinsure.co.kr/CG302260001.ec','kb암보험과건강하게사는이야기.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'NH손해보험', '(무)NH다이렉트 암보험', '암 보험', '갱신', '만19~70세', '10/20/30년 자동갱신(갱신종료나이:100세)', '전기납', '월납', 'www.nhfire.co.kr/product/retrieveProduct.nhfire?pdtCd=D411211','nh다이렉트암보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '라이나생명', '(무)뉴실버암보험(갱신형)', '암 보험', '갱신', '1형(실버형):61~80세/2형(유병자형):61~70세', '10년만기 갱신현(최장 100세까지 보장)', '전기납', '월납', 'direct.e-lina.co.kr/mall/P00179_01.htm?t=SA_2107_A_db_2b&adtype=WEB_SA&media=GOOGLE_direct','뉴실버암보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '롯데손해보험', '(무)let:smile 종합건강보험(더끌림 플러스)(2201)(무해지형)(암플랜)', '암 보험', '비갱신', '15세~70세(단, 보험기간/납입기간별 상이)', '4종:100세만기(특약별 상이)', '20,25,30년납(단, 특약별, 가입연령별 상이)', '월납', 'www.lotteinsumall.com/cancer.html?utm_source=google_pc&utm_medium=cpc&utm_campaign=jump&utm_term=%EC%86%90%ED%95%B4%EB%B3%B4%ED%97%98&gclid=Cj0KCQjw3v6SBhCsARIsACyrRAlBMkFawZiMrpmgcMoLsEloEYSSt95bBIGYpXe-ap9vwfRRUKU1uVcaAlHHEALw_wcB','letsmile종합건강보험_더끌림플러스.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '한화손해보험', '무배당 마이라이프 한아름종합보험(암플랜)', '암 보험', '일부갱신', '만15세~최대70세', '세만기 : 80세, 90세, 100세, 110세만기 (특약별 상이)/갱신특약 : 3년, 20년만기/연만기 : 10년,15년,20년만기', '10,15,20,25,30년납', '월납', 'www.hwgeneralins.com/product/catalog/product-info.do?insGdcd=LA01381001','mylife한아름종합보험_암플랜.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '한화손해보험', 'LIFEPLUSE처음부터지켜주는암보험', '암 보험', '갱신', '10년만기:30-80세/20년만기:30-80세/30년만기:6-70세', '10년/20년/30년 만기(최종 갱신계약의 만기일은 피보험자의 보험나이 100세 계약해당일로 함)', '전기납', '월납', 'www.hwgeneralins.com/product/catalog/product-info.do?insGdcd=LA01864001','lifeplus처음부터지켜주는암보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '현대해상', '(무)계속받는 암보험(Hi2108)', '암 보험', '일부갱신', '0세~68세(보장별 가입나이 상이)', '1종:10,15,20,30년 만기/2종:80,90,100세 만기', '1종:전기납/2종:10,15,20,25,30년납', '월납,연납', 'www.hi.co.kr/serviceAction.do','계속받는암보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '흥국화재', '(무)행복을多주는가족사랑종합보험(22.01)(1종)(암플랜)', '암 보험', '비갱신', '만15세~최대70세', '80세,90세,100세만기(일부특약 상이)', '10,15,20,25,30년납', '월납,연납', 'www.heungkukfire.co.kr/FRW/insurance/insGoods.do?seq=28','행복을다주는가족사랑종합보험.PNG');
+
+
+
+--치아보험 -----
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'DB손해보험', '참좋은치아사랑보험', '치아 보험', '갱신', '6~70세', '7,15,20년만기 자동갱신(최대80세까지)', '전기납', '월납,연납', 'www.idbins.com/FWMALV0709.do','참좋은치아사랑보험.PNG' );
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'KB손해보험', 'KB The건강한치아보험', '치아 보험', '갱신', '만2세~70세', '5, 10, 15, 20년만기 갱신형 (갱신종료: 80세)', '전기납', '월납, 3월납, 6월납, 연납', 'www.kbinsure.co.kr/CG302130001.ec', 'the건강한치아보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'라이나생명', 'THE건강한치아보험V', '치아 보험', '갱신', '0세~75세(단, 10년만기는 최대 70세)', '5년 만기 , 10년만기 갱신형 (최장 80세까지 보장)', '전기납', '월납', 'www.lina.co.kr/product/productView/productView_P00198.htm','the건강한치아보험v.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'삼성화재', '치아보험 덴탈파트너', '치아 보험', '비갱신', '2세~70세', '5,10,15,20년만기 갱신형(최대 100세만기)', '전기납', '월납', 'www.samsungfire.com/util/P_C02_02_03_03.html','덴탈파트너.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'현대해상', '밝게웃는얼굴치아보험', '치아 보험', '갱신', '15세~최대70세', '5,10,15,20년만기 갱신형(최대 80세 만기)', '전기납', '월납', 'www.hi.co.kr/serviceAction.do','밝게웃는얼굴치아보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'흥국화재', '흥국화재 이튼튼한치아보험(1종)', '치아 보험', '갱신', '6세~(갱신종료나이-10', '10,15년 갱신형(60,70,80세 만기)', '전기납', '', 'www.heungkukfire.co.kr/FRW/insurance/insGoods.do?seq=259#empty-ahchor','문의.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'흥국화재', '흥국화재 이튼튼한치아보험(2종)', '치아 보험', '비갱신', '6세~최대70세', '60,70,80세 만기', '5,10,15,20,25년납', '월납,2개월납,3개월납,6개월납,연납', 'www.heungkukfire.co.kr/FRW/insurance/insGoods.do?seq=259#empty-ahchor','문의.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval,'흥국생명', '미소굿치아보험', '치아 보험', '갱신', '2세~70세', '5,10,15,20년 만기', '전기납', '월납', 'www.heungkuklife.co.kr/','문의.PNG');
+
+
+
+--종신/정기 보험
+insert into insu values(insu_seq.nextval, '흥국생명', '다사랑착한종신보험', '종신/정기보험', '갱신', '문의.PNG', '15세~68세', '종신', '20년,30년납', '월납', '해지환급금 미지급형입니다.', '동의', 'www.heungkuklife.co.kr');
+insert into insu values(insu_seq.nextval, '메리츠화재', '메리츠올바른정기보험', '종신/정기보험', '자동갱신', '문의.PNG', '15세~80세', '10,20,30년만기', '전기납', '월납', '생활안정자금 보장', '동의', 'cancerok.com/common/popup/insu/rule.html?b_rule=1637051918.pdf');
+insert into insu values(insu_seq.nextval, '흥국생명', '온라인정기보험', '종신/정기보험', '비갱신', '문의.PNG', '19세~60세', '60세만기,80세만기', '10년,20년납', '월납', '비흡연자 보험료 할인', '동의', 'online.heungkuklife.co.kr/pcw/main/main.do');
+
+
+
+--신생아/태아보험
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'DB손해보험', '실손의료비보험(신생아)', '어린이/태아 보험', '갱신', '태아(출생이후부터 보장)', '1년만기(보장내용 변경주기 : 최대 5년)', '전기납', '월납,3개월납,6개월납,연납', 'www.idbins.com/FWMALV0723.do','DB실손의료비보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'KB손해보험', '(무)KB금쪽같은자녀보험(해지환급금미지급형)(22.02)(자녀종합형)', '어린이/태아 보험', '일부 갱신', '태아(출생이후부터 보장)~보험나이30세', '90세,100세,110세만기', '20,25,30년납', '월납,3개월납,6개월납,연납', 'www.kbinsure.co.kr/CG302010001.ec','kb금쪽같은자녀보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'DB손해보험', '(무)프로미라이프 아이(I)러브(LOVE)건강보험2004(신생아종합형)', '어린이/태아 보험', '비갱신', '태아(출생이후 보장)', '(출생이후)1010세 만기(일부특약 1년,20세,30세,80세 만기)', '10,15,20,25,30년납', '월납,3개월납,6개월납,연납', 'dbinsure.co.kr/kids?JEHUSA_CD=C5208&utm_medium=cpc&utm_source=naver&utm_campaign=pc&utm_content=kids&utm_term=move','아이러브플러스건강보험_신생아종합형.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'DB손해보험', '(무)프로미라이프아이(I)러브(LOVE)플러스건강보험2204(자녀종합형)', '어린이/태아 보험', '일부 갱신', '0세~30세', '100세 만기(일부특약 80세 만기)', '20,25,30년납', '월납', 'dbinsure.co.kr/kids?JEHUSA_CD=C5208&utm_medium=cpc&utm_source=naver&utm_campaign=pc&utm_content=kids&utm_term=move','아이러브플러스건강보험_자녀종합형.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, 'NH농협손해보험', '(무)NH가성비굿플러스어린이보험2201(1종_해지환급금미지급형Ⅱ)', '어린이/태아 보험', '일부 갱신', '0세(태아제외)~30세', '80세,90세,100세', '20년,25년,30년납', '월납', 'www.nhfire.co.kr/product/retrieveProduct.nhfire?pdtCd=D312116','nh가성비굿플러스어린이보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '메리츠화재', '(무)내Mom같은 베이비보험2201(신생아종합형)','어린이/태아 보험', '비갱신', '태아(출생이후 보장)', '80세,90세,100세', '20,25,30년납', '월납', 'store.meritzfire.com/health-and-kids/mom-baby.do#!/','내mom같은베이비보험_신생아종합형.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '메리츠화재', '(무)내Mom같은 어린이보험2201(자녀종합형)', '어린이/태아 보험', '비갱신', '1세~30세', '80세,90세,100세 만기', '10,20,25,30년납', '월납', 'store.meritzfire.com/health-and-kids/mom-kid.do#!/','내mom같은어린이보험_자녀종합형.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '롯데손해보험', '(무)let:play 자녀보험(도담도담)(무해지형)(2201)', '어린이/태아 보험', '비갱신', '태아(출생이후 보장)~30세(단,보험기간/납입기간별 상이)', '9종:100세만기(특약별 상이)', '20,25,30년납(단,특약별, 가입연령별 상이)', '월납', 'www.lotteinsumall.com/child.html?utm_source=google_pc&utm_medium=cpc&utm_campaign=jump&utm_term=%EC%86%90%ED%95%B4%EB%B3%B4%ED%97%98&gclid=Cj0KCQjw3v6SBhCsARIsACyrRAlBMkFawZiMrpmgcMoLsEloEYSSt95bBIGYpXe-ap9vwfRRUKU1uVcaAlHHEALw_wcB','letplay자녀보험.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '현대해상', '(무)굿앤굿어린이종합보험Q(Hi2201)(신생아종합형)', '어린이/태아 보험', '비갱신', '태아(출생이후 보장)', '10,20,30,80,90,100세 만기(특약별 상이)', '5년,10년,15년,20년,30년납,전기납,일시납(특약별 상이)', '월납', 'www.hi.co.kr/serviceAction.do','굿앤굿어린이종합보험q_신생아종합형.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '현대해상', '(무)굿앤굿 어린이종합보험Q(Hi2201)(자녀종합형)', '어린이/태아 보험', '일부 갱신', '0세~14세', '10,20,30,80,90,100세 만기(특약별 상이)', '5년,10년,15년,20년,25년,30년납,일시납(특약별 상이)', '월납', 'www.hi.co.kr/serviceAction.do','굿앤굿어린이종합보험q_자녀종합형.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '삼성화재', '(무)실손의료비보험(신생아)', '어린이/태아 보험', '갱신', '태아(출생이후부터 보장)', '1년만기 (보장내용 변경주기 : 최대 5년)', '전기납', '월납','www.samsungfire.com/product/P_P02_03_04_075.html','삼성실손의료비보험_신생아.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '삼성화재', '(무)실손의료비보험(자녀)', '어린이/태아 보험', '갱신', '태아(출생이후 보장)~65세', '1년만기 (보장내용 변경주기 : 최대 5년)', '전기납', '월납,3개월납,6개월납,연납','www.samsungfire.com/product/P_P02_03_04_075.html','삼성실손의료비보험_자녀.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '한화손해보험', 'LIFEPLUS 처음부터 함께하는 자녀보험2111(기본형)(자녀플랜)', '어린이/태아 보험', '일부 갱신', '0세~30세(보험기간별,특약별 상이)', '20,30,44,80,90,100세 만기(특약별 상이)(단, 갱신계약은 1년,3년만기 특약별 상이)', '10,15,20,25,30년납(특약별 상이)(단, 갱신계약근 전기납)', '월납', 'www.hwgeneralins.com/product/catalog/product-info.do?insGdcd=LA01392002','lifeplus처음부터함께하는자녀보험_자녀플랜.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '한화손해보험', 'LIFEPLUS 처음부터 함께하는 자녀보험2111(기본형)(신생아종합형)', '어린이/태아 보험', '갱신', '태아', '20,30,55,80,90,100세 만기(단,일부특약 상이)', '10,15,20,25,30년납(특약별상이)(단,갱신계약은 전기납)', '월납(단,일부특약 일시납)','www.hwgeneralins.com/product/catalog/product-info.do?insGdcd=LA01392002','lifeplus처음부터함께하는자녀보험_신생아.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '흥국화재', '(무)흥국화재맘편한자녀사랑보험(22.01)(2종)(신생아종합형)', '어린이/태아 보험', '비갱신', '태아(출생이후부터 보장)', '80세,90세,100세 만기', '10년,15년,20년,25년,30년납', '월납', 'www.heungkukfire.co.kr/FRW/insurance/insGoods.do?seq=658#empty-ahchor','맘편한자녀사랑보험_신생아종합형.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '흥국화재', '(무)흥국화재맘편한자녀사랑보험(22.04)(2종)(자녀종합형)', '어린이/태아 보험', '비갱신', '태아(출생이후부터 보장)~만30세', '80세,90세,100세 만기(특약별 상이)', '10년,115년,20년,25년,30년납(특약별 상이)', '월납', 'www.heungkukfire.co.kr/FRW/insurance/insGoods.do?seq=658#empty-ahchor','맘편한자녀사랑보험_자녀종합형.PNG');
+insert into insu(insu,insucompany,insuname,category,insutype,insuage,insuper,payper,paycyc,link,insuprice) values(insu_seq.nextval, '흥국생명', '(무)다재다능어린이종합보험', '어린이/태아 보험', '일부갱신', '0~30세', '1종:90세,100세 만기/2종:30세,90세,100세 만기', '20년,30년납', '월납', 'www.heungkuklife.co.kr/','문의.PNG');
+
+
+
+
+commit;
+
+-- 보험 api 시퀀스
+drop sequence bohum_seq;
+create sequence bohum_seq
+   increment by 1
+     start with 1
+     minvalue 1
+     maxvalue 100000
+     nocache;
+
+-- 보험 api 테이블
+
+drop table bohum cascade constraints;
+create table bohum (
+   no number primary key,
+   basDt varchar2(30) not null,
+   cmpyCd varchar2(30) not null,
+   cmpyNm varchar2(200) not null,
+   ptrn varchar2(200) not null,
+   mog varchar2(200) not null,
+   age number,
+   prdNm varchar2(200) not null,
+   mlInsRt number,
+   fmlInsRt number
+);
+
+-- 회사 정보 시퀀스
+drop sequence cinfo_seq;
+create sequence cinfo_seq
+   increment by 1
+   start with 1
+   nocache;
+
+-- 회사 정보 테이블
+
+-- 회사 시퀀스
+-- 회사명
+-- 사업자 등록번호
+-- 회사 로고(이미지 파일)
+-- 회사 보험 (보험 시퀀스들)
+-- 회사 관리자 아이디
+
+drop table cinfo cascade constraints;
+create table cinfo(
+   cnum number primary key,
+   cname varchar2(30) not null,
+   cregi_num number,
+   cimage varchar2(50),
+   clink varchar2(200),
+   cadmin varchar2(30)
+);
+
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'2028145617','삼성화재', 'admin','http://www.samsungfire.com/', '삼성화재1.jpg');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'2018145593','DB손해보험', 'admin','http://www.idbins.com/FWMAIV0001.do', 'DB손해보험1.jpeg');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'1048629322','IBK연금', 'admin','http://www.ibki.co.kr/process/HP_MAIN_FRAME', 'IBK연금보험1.PNG');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'2028148370','KB손해보험', 'admin','http://www.kbinsure.co.kr/main.ec', 'KB손해보험1.png');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'1048639719','NH손해보험', 'admin','http://www.nhfire.co.kr/index.nhfire', 'NH손해보험1.PNG');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'2208852643','MG손해보험', 'admin','http://www.mggeneralins.com/HO011010DM.scp', 'MG손해보험1.jpeg');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'2028138251','동양생명', 'admin','http://www.myangel.co.kr/process/main', '동양생명1.PNG');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'1168103752','메리츠화재', 'admin','http://store.meritzfire.com/health-and-kids/total-care.do#!/', '메리츠화재1.png');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'1048118586','흥국생명', 'admin','http://www.heungkuklife.co.kr/', '흥국생명1.PNG');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'1028107837','흥국화재', 'admin','http://www.heungkukfire.co.kr/MAW/main1.do', '흥국화재1.png');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'1168146445','한화손해보험', 'admin','http://www.hwgi.kr/main', '한화손해1.png');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'1048185673','라이나생명', 'admin','http://www.lina.co.kr/main/main.htm', '라이나생명1.png');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'1048130770','롯데손해보험', 'admin','http://www.lotteins.co.kr/web/main.jsp', '롯데손해1.png');
+insert into cinfo(cnum,cregi_num, cname, cadmin,clink,cimage) values(cinfo_seq.nextval,'1028132035','현대해상보험', 'admin','http://www.hi.co.kr/serviceAction.do', '현대해상1.png');
+commit;
+-- 개인 정보 테이블
+
+-- id 
+-- pw    
+-- 이름                  
+-- 주민번호(앞자리)              
+-- 주민번호(뒷자리)           
+-- 휴대폰번호1              
+-- 휴대번호2               
+-- 휴대번호3             
+-- 이메일1
+-- 이메일2          
+-- 사업자등록번호
+-- 회원 타입(피보험자  관리자 보험사직원)      
+-- 회원 세부 정보(다른 테이블과 연결 될 것임)
+-- 보험사(회사 시퀀스랑 연결)
+
+drop table members cascade constraints;
+create table members(
+   id varchar2(30) primary key,
+   password varchar2(40),
+   name varchar2(30),
+   regi_number1 number,
+   regi_number2 number,
+   phone1 number,
+   phone2 number,
+   phone3 number,
+   email1 varchar2(20),
+   email2 varchar2(30),
+   userState varchar2(20) default '일반'  check(userState in('일반','회사','관리자')),
+   userDetail number not null,
+   companyInfo number default 0,
+   cname varchar2(20)
+);
+
+drop sequence userDetails_seq;
+create sequence userDetails_seq
+  increment by 1
+  start with 1
+  minvalue 1
+  maxvalue 10000
+  nocache;
+
+-- 일반 2명
+insert into members(id, password, name, regi_number1, regi_number2, phone1, phone2, phone3, email1, email2, userState, userDetail)
+values('kim','1234','김연아',900101,2000000,010,111,1111,'kimgyhye000','gmail.com','일반',userDetails_seq.nextval);
+
+insert into members(id, password, name, regi_number1, regi_number2, phone1, phone2, phone3, email1, email2, userState, userDetail)
+values('park','1234','박세리',801212,2111111,010,222,2222,'park34','naver.com','일반',userDetails_seq.nextval);
+
+-- 보험사 직원
+insert into members(id, password, name, regi_number1, regi_number2, phone1, phone2, phone3, email1, email2, userState, userDetail,cname)
+values('son','1234','손흥민',950401,1111111,010,333,3333,'sonson','naver.com','회사',userDetails_seq.nextval,'흥국화재');
+
+-- 관리자
+insert into members(id, password, userState, userDetail)
+values('admin','1234','관리자',userDetails_seq.nextval);
+-- 개인 정보 디테일 시퀀스
+
+
+insert into members(id, password, name,userDetail,email1 ,email2 ,regi_number1  ,regi_number2,phone1, phone2, phone3) 
+values('kim01','1234','김경혜',userDetails_seq.nextval,'kimgyhye','naver.com',960911,2000000,010,5519,3779);
+
+
+commit;
+
+-- 유저 상제 정보 테이블
+
+DROP TABLE userDetails CASCADE CONSTRAINTS;
+create table userDetails(
+   num number primary key,
+   age number not null,
+   gender varchar2(30)  default '남자' check(gender in('남자','여자')),  
+   job varchar2(30) not null,
+   salary number,
+   marriage varchar2(20) default '미혼' check(marriage  in('미혼','기혼')),   
+   height number,
+   weight number,
+   disease varchar2(100),
+   family_history varchar2(100)
+);
+
+insert into userDetails(num,age,gender,job,disease ,family_history ) 
+values(5,27,'여자','블루칼라','천식','고혈압');
+
+insert into userDetails(num,age,gender,job,disease ,family_history ) 
+values(4,23,'남자','블루칼라','천식','고혈압');
+
+
+commit;
+
+
+-- 찜 테이블
+
+drop table heart cascade constraints;
+create table heart(
+   mid varchar2(30),
+   insu_num number references insu(insu) on delete cascade ,
+   heartdate date default sysdate
+);
+
+
+insert into heart(mid, insu_num,heartdate) values('admin', 1,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('admin', 15,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('admin', 30,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('admin', 45,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('admin', 46,'2022-04-20');
+
+
+insert into heart(mid, insu_num,heartdate) values('admin', 29,'2022-04-21');
+insert into heart(mid, insu_num,heartdate) values('admin', 30,'2022-04-21');
+insert into heart(mid, insu_num,heartdate) values('admin', 45,'2022-04-21');
+insert into heart(mid, insu_num,heartdate) values('admin', 46,'2022-04-21');
+
+insert into heart(mid, insu_num,heartdate) values('admin', 1,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('admin', 15,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('admin', 23,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('admin', 29,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('admin', 30,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('admin', 46,'2022-04-22');
+
+insert into heart(mid, insu_num,heartdate) values('admin', 1,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('admin', 15,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('admin', 29,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('admin', 30,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('admin', 46,'2022-04-23');
+
+insert into heart(mid, insu_num,heartdate) values('admin', 1,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('admin', 15,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('admin', 23,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('admin', 29,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('admin', 30,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('admin', 45,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('admin', 46,'2022-04-24');
+
+
+insert into heart(mid, insu_num,heartdate) values('admin', 1,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 15,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 23,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 29,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 30,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 45,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 46,'2022-04-25');
+
+
+insert into heart(mid, insu_num,heartdate) values('son', 1,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 15,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 23,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 29,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 30,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 45,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 46,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 11,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 25,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 24,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 2,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 3,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 4,'2022-04-26');
+insert into heart(mid, insu_num,heartdate) values('son', 6,'2022-04-26');
+
+insert into heart(mid, insu_num,heartdate) values('kim', 1,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('kim', 15,'2022-04-19');
+insert into heart(mid, insu_num,heartdate) values('kim', 23,'2022-04-21');
+insert into heart(mid, insu_num,heartdate) values('kim', 29,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('kim', 30,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('kim', 45,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('kim', 46,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('kim', 14,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('kim', 25,'2022-04-19');
+insert into heart(mid, insu_num,heartdate) values('kim', 24,'2022-04-21');
+insert into heart(mid, insu_num,heartdate) values('kim', 2,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('kim', 3,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('kim', 4,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('kim', 6,'2022-04-25');
+
+
+insert into heart(mid, insu_num,heartdate) values('kim01', 1,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('kim01', 15,'2022-04-19');
+insert into heart(mid, insu_num,heartdate) values('kim01', 23,'2022-04-21');
+insert into heart(mid, insu_num,heartdate) values('kim01', 28,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('kim01', 10,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('kim01', 45,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('kim01', 46,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('kim01', 14,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('kim01', 25,'2022-04-19');
+insert into heart(mid, insu_num,heartdate) values('kim01', 24,'2022-04-21');
+insert into heart(mid, insu_num,heartdate) values('kim01', 2,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('kim01', 35,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('kim01', 4,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('kim01', 6,'2022-04-25');
+
+
+insert into heart(mid, insu_num,heartdate) values('park', 1,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('park', 15,'2022-04-19');
+insert into heart(mid, insu_num,heartdate) values('park', 23,'2022-04-21');
+insert into heart(mid, insu_num,heartdate) values('park', 28,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('park', 10,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('park', 45,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('park', 46,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('park', 14,'2022-04-20');
+insert into heart(mid, insu_num,heartdate) values('park', 25,'2022-04-19');
+insert into heart(mid, insu_num,heartdate) values('park', 22,'2022-04-21');
+insert into heart(mid, insu_num,heartdate) values('park', 2,'2022-04-22');
+insert into heart(mid, insu_num,heartdate) values('park', 35,'2022-04-23');
+insert into heart(mid, insu_num,heartdate) values('park', 4,'2022-04-24');
+insert into heart(mid, insu_num,heartdate) values('park', 5,'2022-04-25');
+
+
+insert into heart(mid, insu_num,heartdate) values('admin', 36,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 37,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 38,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 39,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 40,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 41,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 42,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 43,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 44,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 45,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 46,'2022-04-25');
+insert into heart(mid, insu_num,heartdate) values('admin', 47,'2022-04-25');
+
+commit;
+
+--'(무)흥국화재맘편한자녀사랑보험(22.01)(2종)(신생아종합형)'
